@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -80,7 +81,59 @@ class _BodyWidgetState extends State<BodyWidget> {
               ])),
           const Spacer(),
           TextButton(
-              onPressed: () {},
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return Dialog(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF0F0F0),
+                        ),
+                        height: 350,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: QrImage(
+                                padding: const EdgeInsets.all(8),
+                                backgroundColor: Colors.white,
+                                data: "1234567890",
+                                version: QrVersions.auto,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'Scan QR Code to download record book',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            TextButton(
+                              onPressed: (){
+                                Navigator.pop(context);
+                              }, 
+                              child: const Text(
+                                'Close', 
+                                style: TextStyle(
+                                  color: Colors.red, fontSize: 16
+                                ),
+                              )
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
               style: TextButton.styleFrom(backgroundColor: yellowColor),
               child: Row(
                 children: const [
