@@ -50,7 +50,6 @@ class ProductRepositoryImpl implements ProductRepository {
         tableName: 'products',
         columns: ['id', 'name', 'date', 'process', 'image', 'createdAt'],
       );
-
       return products.map((product) => Product.fromJson(product)).toList();
     } catch (e) {
       print(e);
@@ -75,14 +74,15 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<bool> updateProduct(Product product) async{
-  try {
+  Future<bool> updateProduct(Product product) async {
+    try {
       //get values
       const tableName = 'products';
       Map<String, dynamic> data = product.toJson();
-
+      print(data);
       //perform insert action
-      final success = await DbHelper.updateData(tableName: tableName, values: data,where: 'id = ${product.id}');
+      final success =
+          await DbHelper.updateData(tableName: tableName, values: data, where: product.id!);
       return success;
     } catch (e) {
       print(e);

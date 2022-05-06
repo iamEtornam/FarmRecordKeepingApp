@@ -1,6 +1,7 @@
 import 'package:farm_keep/models/product.dart';
 import 'package:farm_keep/providers/product_provider.dart';
 import 'package:farm_keep/ui/add_record_view.dart';
+import 'package:farm_keep/ui/qrcode_scanner_view.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -46,7 +47,19 @@ class _HomeViewState extends State<HomeView> {
           )
         ],
       ),
-      drawer: const Drawer(),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              onTap: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => const QRCodeScannerView())),
+              leading: const Icon(Icons.qr_code_2),
+              title: const Text('Scan QRcode'),
+            ),
+            const Divider()
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final result = await Navigator.push(
@@ -79,6 +92,7 @@ class _HomeViewState extends State<HomeView> {
             }
             return BodyWidget(
               products: snapshot.data!,
+              productProvider: _provider,
             );
           }),
     );
@@ -86,8 +100,10 @@ class _HomeViewState extends State<HomeView> {
 }
 
 class BodyWidget extends StatefulWidget {
-  const BodyWidget({Key? key, required this.products}) : super(key: key);
+  const BodyWidget({Key? key, required this.products, required this.productProvider})
+      : super(key: key);
   final List<Product> products;
+  final ProductProvider productProvider;
 
   @override
   State<BodyWidget> createState() => _BodyWidgetState();
@@ -187,29 +203,76 @@ class _BodyWidgetState extends State<BodyWidget> {
           ),
           const SizedBox(height: 16),
           OrientationBuilder(builder: (context, orientation) {
-            return GridView.builder(
-              controller: scrollController,
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
-                  childAspectRatio: .9,
-                  crossAxisSpacing: 6,
-                  mainAxisSpacing: 6),
-              itemBuilder: (context, index) {
-                return InkWell(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = index;
-                      });
-                    },
-                    child: GridItem(
-                      product: widget.products[index],
-                      backgroundColor: selectedIndex == null
-                          ? Colors.white
-                          : (selectedIndex == index ? yellowColor : Colors.white),
-                    ));
-              },
-              itemCount: widget.products.length,
+            return RefreshIndicator(
+              triggerMode: RefreshIndicatorTriggerMode.anywhere,
+              color: Colors.green,
+         
+              onRefresh: () => widget.productProvider.getProducts(),
+              child: GridView.builder(
+                controller: scrollController,
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
+                    childAspectRatio: .9,
+                    crossAxisSpacing: 6,
+                    mainAxisSpacing: 6),
+                itemBuilder: (context, index) {
+                  return InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedIndex = index;
+                        });
+                      },
+                      onLongPress: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: const Text('Do you want to delete this product?'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                        final isDeleted = await widget.productProvider
+                                            .deleteProduct(widget.products[index].id!);
+                                        if (isDeleted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                            content: Text(
+                                              'Product deleted!',
+                                              style: TextStyle(color: Colors.green),
+                                            ),
+                                          ));
+                                          setState(() {
+                                            widget.productProvider.getProducts();
+                                          });
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                            content: Text(
+                                              'Could not delete product',
+                                              style: TextStyle(color: Colors.red),
+                                            ),
+                                          ));
+                                        }
+                                      },
+                                      child: const Text('Yes')),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('No')),
+                                ],
+                              );
+                            });
+                      },
+                      child: GridItem(
+                        product: widget.products[index],
+                        backgroundColor: selectedIndex == null
+                            ? Colors.white
+                            : (selectedIndex == index ? yellowColor : Colors.white),
+                      ));
+                },
+                itemCount: widget.products.length,
+              ),
             );
           })
         ]);

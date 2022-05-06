@@ -207,6 +207,7 @@ class _AddRecordViewState extends State<AddRecordView> {
                           final category = processing;
                           final image = _selectedFile!.readAsBytesSync();
                           final product = Product(
+                              id: widget.product?.id,
                               createdAt: DateTime.now().toIso8601String(),
                               date: date,
                               image: image,

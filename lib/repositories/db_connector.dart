@@ -8,7 +8,7 @@ class DbHelper {
       print('**************** db opened ****************');
     }, onCreate: (Database db, int version) async {
       await db.execute(
-        'CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY, name TEXT, date TEXT, process TEXT, image BLOB, createdAt TEXT)',
+        'CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, date TEXT, process TEXT, image BLOB, createdAt TEXT)',
       );
     });
   }
@@ -72,16 +72,12 @@ class DbHelper {
   static Future<bool> updateData({
     required String tableName,
     required Map<String, Object?> values,
-    required String where,
+    required Object where,
   }) async {
     //open db
     try {
       final db = await openDb();
-      final res = await db.update(
-        tableName,
-        values,
-        where: where,
-      );
+      final res = await db.update(tableName, values, where: 'id = ?', whereArgs: [where]);
       return res == 1;
     } catch (e) {
       print(e);

@@ -49,5 +49,7 @@
 	<string>FarmKeep needs access to your Library to select picture</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>FarmKeep needs access to your Microphone to capture sound/voice</string>
+	<key>io.flutter.embedded_views_preview</key>
+<true/>
 </dict>
 </plist>
