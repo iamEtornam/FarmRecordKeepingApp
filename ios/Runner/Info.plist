@@ -43,5 +43,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>FarmKeep needs access to your camera to take picture</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>FarmKeep needs access to your Library to select picture</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>FarmKeep needs access to your Microphone to capture sound/voice</string>
 </dict>
 </plist>

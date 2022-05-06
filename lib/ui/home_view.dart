@@ -1,11 +1,17 @@
 import 'package:farm_keep/models/product.dart';
 import 'package:farm_keep/providers/product_provider.dart';
+import 'package:farm_keep/ui/add_record_view.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class HomeView extends StatelessWidget {
-  HomeView({Key? key}) : super(key: key);
+class HomeView extends StatefulWidget {
+  const HomeView({Key? key}) : super(key: key);
 
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
   final ProductProvider _provider = ProductProvider();
 
   @override
@@ -42,7 +48,14 @@ class HomeView extends StatelessWidget {
       ),
       drawer: const Drawer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          final result = await Navigator.push(
+              context, MaterialPageRoute(builder: (context) => const AddRecordView()));
+          if (result == true) {
+            setState(() {});
+            _provider.getProducts();
+          }
+        },
         child: const Icon(
           Icons.add,
           color: Colors.black,
@@ -127,7 +140,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                                   child: QrImage(
                                     padding: const EdgeInsets.all(8),
                                     backgroundColor: Colors.white,
-                                    data: "1234567890",
+                                    data: 'Farm1',
                                     version: QrVersions.auto,
                                   ),
                                 ),
@@ -268,7 +281,14 @@ class GridItem extends StatelessWidget {
                   alignment: Alignment.topRight,
                   child: FloatingActionButton(
                     backgroundColor: Colors.white,
-                    onPressed: () {},
+                    onPressed: () async {
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddRecordView(
+                                    product: product,
+                                  )));
+                    },
                     mini: true,
                     child: const Icon(
                       Icons.edit,

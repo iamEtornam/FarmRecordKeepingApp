@@ -52,6 +52,40 @@ class DbHelper {
     );
   }
 
-  //TODO: delete data from table
-  //TODO: update data in table
+  ///delete data from table
+  ///[tableName] table name
+  ///[where] where clause
+  static Future<bool> deleteData({
+    required String tableName,
+    required String where,
+  }) async {
+    //open db
+    final db = await openDb();
+    final res = await db.delete(tableName, where: where);
+    return res == 1;
+  }
+
+  ///update data in table
+  ///[tableName] table name
+  ///[values] values to update
+  ///[where] where clause
+  static Future<bool> updateData({
+    required String tableName,
+    required Map<String, Object?> values,
+    required String where,
+  }) async {
+    //open db
+    try {
+      final db = await openDb();
+      final res = await db.update(
+        tableName,
+        values,
+        where: where,
+      );
+      return res == 1;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }

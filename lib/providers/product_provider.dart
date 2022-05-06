@@ -12,7 +12,15 @@ class ProductProvider {
     return _repository.insertProduct(product);
   }
 
-  //TODO: update
-  //TODO: delete
-  //TODO: get one - IGNORE
+  Future<bool> updateProduct(Product product) async {
+    return _repository.updateProduct(product);
+  }
+
+  Future<bool> deleteProduct(int productID) async {
+    return _repository.deleteProduct(productID);
+  }
+
+  Future<Product?> getOneProduct(int productID) async {
+    return _repository.getProduct(productID);
+  }
 }
